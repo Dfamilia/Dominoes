@@ -7,6 +7,8 @@
 #crear estructura para un jugador
 #jugar con 4 jugadores
 
+import random
+
 #estructura para la ficha
 class Ficha:
     def __init__(self, a, b):
@@ -59,14 +61,41 @@ def crearDominoes(Dominoes = [], ladoA = 0, ladoB = 0, cont = 0):
         else:
             return crearDominoes(Dominoes, ladoA, ladoB+1, cont+1)
 
+#creando la estructura de la mesa de juego
+class Mesa:
+    #guardando todas las fichas en una variable de clase para que pueda ser accedida su informacion desde todos los objetos 
+    fichas = crearDominoes()
+    
+    def __init__(self):
+        self.pFicha = None
+        self.uFicha = None
+
+    #metodo para revolver las fichas
+    @classmethod
+    def revolverFichas(cls):
+        return random.shuffle(cls.fichas)
+
+         
 
 # dominoes = Dominoes()
-print(crearDominoes())
-print()
+#print(crearDominoes())
+#print()
 
-for e in crearDominoes():
+# for e in crearDominoes():
+#     print(str(e))
+mesa = Mesa()
+# print(mesa.fichas)
+
+# print(mesa.fichas)
+
+print()
+for e in mesa.fichas:
     print(str(e))
 
+mesa.revolverFichas()
+print()
+for e in mesa.fichas:
+    print(str(e))
 # ficha = dominoes.getDominoes()[4]
 # print(ficha)
 # ficha.girar()
