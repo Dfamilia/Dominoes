@@ -7,7 +7,36 @@
 #crear estructura para un jugador
 #jugar con 4 jugadores
 
+####################################
+######### Librerias ################
+####################################
+
 import random
+
+####################################
+######### Funciones ################
+####################################
+
+def Dominoes(allFichas = [], ladoA = 0, ladoB = 0, cont = 0):
+    
+    #CONSTANTE para la cantidad de fichas
+    TOTALFICHAS = 28
+
+    if cont == TOTALFICHAS:
+        return allFichas
+    else:
+        
+        #agrega las fichas al array
+        allFichas.append(Ficha(ladoA, ladoB))
+        
+        if ladoA == ladoB:
+            return Dominoes(allFichas, ladoA+1, 0, cont+1)
+        else:
+            return Dominoes(allFichas, ladoA, ladoB+1, cont+1)
+
+####################################
+######### Clases ###################
+####################################
 
 #estructura para la ficha
 class Ficha:
@@ -16,87 +45,80 @@ class Ficha:
         self.ladoB = b
         self.ficha = [self.ladoA, self.ladoB]
     
+    #metodo para girar la ficha
     def girar(self):
 
+        #se realizo para que sea mas entendible el cambio
         self.ladoA, self.ladoB = self.ladoB, self.ladoA
-        
+        #se asignan nuevos valores a la lista
         self.ficha = [self.ladoA, self.ladoB]
     
+    #imprimir la ficha
     def __str__(self):
         return "{}".format(self.ficha)
 
-        
-#crea la estructura para guargar dominoes
-#se comenta para probar que no se necesita para
-#crear los dominoes
-# class Dominoes:
+#TODO crear estructura para jugador
+#TODO el jugador verifica que puede jugar, si es asi juega la ficha
+class Jugador:
 
-#     def __init__(self):
-#         self.dominoes = []
+    def __init__(self, nomJugador):
+        self.nombre = nomJugador
+        self.fichas = []
+        self.totalFichas = 0
 
-#     def add_dominoes(self, ficha):
-#         self.dominoes.append(ficha)
-
-#     def getDominoes(self):
-#         return self.dominoes
-    
-#     def __str__(self):
-#         stringResult = ""
-#         for e in self.dominoes:
-#             stringResult += "{} \n".format(e.ficha)
-#         return stringResult
-
-
-#crea las 28 fichas del domino
-def crearDominoes(Dominoes = [], ladoA = 0, ladoB = 0, cont = 0):
-
-    if cont == 28:
-        return Dominoes
-    else:
-        # Dominoes.add_dominoes(Ficha(ladoA,ladoB))
-        Dominoes.append(Ficha(ladoA,ladoB))
-        
-        if ladoA == ladoB:
-            return crearDominoes(Dominoes, ladoA+1, 0, cont+1)
-        else:
-            return crearDominoes(Dominoes, ladoA, ladoB+1, cont+1)
+    #se llama este metodo si el jugador necesita una ficha aparte de las que reparte la mesa
+    def addFicha(self, ficha):
+        self.fichas = ficha
+        self.totalFichas += 1
 
 #creando la estructura de la mesa de juego
-class Mesa:
+#DONE la mesa revuelve las fichas
+#TODO la mesa reparte las fichas
+#TODO la mesa asigna el turno al jugador
+#TODO la mesa mantiene un registro de fichas jugadas
+#TODO la mesa tiene un metodo jugar donde se desarrolla todo el juego de domino y sera el metodo que se llamara para ejecutar el juego 
+#DONE la mesa mantiene un registro de el primer valor de ficha jugada y el ultimo valor de ficha jugada [A|B][B|C][C|D] => V1 = A, V2 = D, esto para saber en que posicion podemos jugar la nueva ficha 
+
+#USAR la clase ficha por herencia
+#USAR la clase jugador por composicion
+class Mesa(Ficha):
+
     #guardando todas las fichas en una variable de clase para que pueda ser accedida su informacion desde todos los objetos 
-    fichas = crearDominoes()
+    #fichas = crearDominoes()
     
-    def __init__(self):
-        self.pFicha = None
-        self.uFicha = None
+    def __init__(self, pFicha = None, uFicha = None):
+        # self.pFicha = pFicha
+        # self.uFicha = uFicha
+        # self.totalFichas = 0
+       # print(Dominoes())
+        self.dominoes = Dominoes()
+        
+    def getDominoes(self):
+        return self.dominoes
 
     #metodo para revolver las fichas
-    @classmethod
-    def revolverFichas(cls):
-        return random.shuffle(cls.fichas)
+    def revolverFichas(self):
+        random.shuffle(self.dominoes)
 
-         
+    #metodo que ejecuta el juego
+    def playDomino(self):
+        pass
 
-# dominoes = Dominoes()
-#print(crearDominoes())
-#print()
 
-# for e in crearDominoes():
-#     print(str(e))
+
+
+###############################################
+########### Pruebas ###########################
+###############################################
+
 mesa = Mesa()
-# print(mesa.fichas)
-
-# print(mesa.fichas)
-
+#print(mesa.getDominoes())
+for e in mesa.getDominoes():
+    print(e)
 print()
-for e in mesa.fichas:
-    print(str(e))
-
+print("revuelvo las fichas")
 mesa.revolverFichas()
 print()
-for e in mesa.fichas:
-    print(str(e))
-# ficha = dominoes.getDominoes()[4]
-# print(ficha)
-# ficha.girar()
-# print(ficha)
+for e in mesa.getDominoes():
+    print(e)
+#print(mesa.revolverFichas())
