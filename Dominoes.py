@@ -36,12 +36,13 @@ def Dominoes(allFichas = [], ladoA = 0, ladoB = 0, cont = 0):
             return Dominoes(allFichas, ladoA, ladoB+1, cont+1)
 
 #funcion que reparte las fichas a los jugadores
-def repartidor(listaDominoes, newList = [], cont = 0,):
-    if cont == 7:
-        return newList
+def repartidor(jugador, listaDominoes):
+    if jugador.totalFichas == 7:
+        return jugador
     else:
-        newList.append(listaDominoes.pop())
-        return repartidor(listaDominoes,newList, cont+1)
+        jugador.fichas.append(listaDominoes.pop())
+        jugador.totalFichas += 1
+        return repartidor(jugador, listaDominoes)
 ####################################
 ######### Clases ###################
 ####################################
@@ -93,7 +94,7 @@ class Jugador:
 ######################################################################################################
 #creando la estructura de la mesa de juego
 #DONE la mesa revuelve las fichas
-#TODO la mesa reparte las fichas
+#DONE la mesa reparte las fichas
 #TODO la mesa asigna el turno al jugador
 #TODO la mesa mantiene un registro de fichas jugadas
 #TODO la mesa tiene un metodo jugar donde se desarrolla todo el juego de domino y sera el metodo que se llamara para ejecutar el juego 
@@ -107,13 +108,15 @@ class Mesa(Ficha):
     #guardando todas las fichas en una variable de clase para que pueda ser accedida su informacion desde todos los objetos 
     #fichas = crearDominoes()
     
-    def __init__(self, jugador):
+    def __init__(self, *jugadores):
 
         # self.pFicha = pFicha
         # self.uFicha = uFicha
         # self.totalFichas = 0
        # print(Dominoes())
-        self.jugador =  jugador
+        
+        #array jugadores
+        self.jugadores =  jugadores
         self.dominoes = Dominoes()
         
     def getDominoes(self):
@@ -125,8 +128,10 @@ class Mesa(Ficha):
 
     #metodo que reparte las fichas entre los jugadores
     def repartirFichas(self):
-        self.jugador.fichas += repartidor(self.dominoes)
-        print(self.jugador.fichas)
+        
+        for jugador in self.jugadores:     
+            repartidor(jugador, self.dominoes)
+            print(jugador)
 
 
     #metodo que ejecuta el juego
@@ -142,13 +147,16 @@ class Mesa(Ficha):
 
 #jugador
 pedro = Jugador("Pedro")
+juan = Jugador("Juan")
+manuel = Jugador("Manuel")
+vale = Jugador("Vale")
 
 #mesa
-mesa = Mesa(pedro)
+mesa = Mesa(pedro, juan, manuel, vale)
 #print(mesa.getDominoes())
-for e in mesa.getDominoes():
-    print(e)
-print()
+# for e in mesa.getDominoes():
+#     print(e)
+# print()
 print("revuelvo las fichas")
 mesa.revolverFichas()
 print()
@@ -165,7 +173,13 @@ for e in mesa.getDominoes():
 print()
 print("datos del jugador")
 print(pedro)
+print(juan)
+print(manuel)
+print(vale)
+
 print()
 ### IDEAS ###
 ## LA MESA recibe los jugadores como parametros para iniciar el juego
 ## Mesa(jugador1, jugador2)
+#AminMoya001
+#829-645-2685
