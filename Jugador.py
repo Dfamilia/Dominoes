@@ -5,21 +5,26 @@ import random
 
 class Jugador:
 
-    def __init__(self, nomJugador):
+    def __init__(self, nomJugador, status = 'CPU'):
         self.nombre = nomJugador
         self.fichas = []
         self.totalFichas = 0
+        self.status = status
 
     #se llama este metodo si el jugador necesita una ficha aparte de las que reparte la mesa(cuando se juege de 2)
     # def addFicha(self, ficha):
     #     self.fichas = ficha
     #     self.totalFichas += 1
     
-    #realiza la jugada en la mesa como haria cada jugador
-    def Jugar(self, fichasEnMesa, pLateral, uLateral):
+    def jugarHM(self):
+        pass
+
+
+    #Jugada realizada por jugador CPU
+    def jugarCPU(self, fichasEnMesa, pLateral, uLateral, jugadaInicial = False):
         
         #se verifica que exista por lo menos una jugada previa para realizar las verificaciones de lugar de lo contrario el jugador jugara una al azar
-        if len(fichasEnMesa) > 0:
+        if not jugadaInicial:
             
             for ficha in self.fichas:
 

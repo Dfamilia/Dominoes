@@ -12,6 +12,7 @@
 ####################################
 
 # e4from Ficha import *
+
 from Jugador import *
 from Funciones import *
 
@@ -95,38 +96,49 @@ class Mesa(Ficha):
         
         #guarda el jugador que realizo la jugada ganadora
         Ganador = ""
-        #lo utilizo para saber cual jugador juega
-        posJugadorActual = 0
-        #pLateral obtiene el valor del terminal izquierdo de la mesa que se puede hacer jugada
-        pLateral = None
-        #uLateral obtiene el valor del terminal derecho de la mesa que se puede hacer jugada
-        uLateral = None
         #lleva un conteo de pases para saber cuando el juego esta trancado
         passCont = 0
-        #lleva un registro de las jugadas realizadas
-        registro =[]
-        
-        #registro de jugadores, jugadas y sus fichas
-        registro.append("****************************** Fichas de los jugadores ******************************")
-        registro.append("")
-        
-        for jugador in self.jugadores:
-            registro.append("{}--:{}".format(jugador.nombre,jugador.fichasDelJugador()))
-        
-        registro.append("")
-        registro.append("********************************* Empieza el juego *********************************")
-        registro.append("")
+        #variable jInicial
+        jugadaInicial = False
+        #lo utilizo para modificar la posicion del jugador en turno
+        posJugadorActual = 0
+        #pLateral obtiene el valor del terminal izquierdo y derecho de la mesa que se puede hacer jugada
+        pLateral,uLateral = None,None
+        #lleva un registro de las jugadas total realizadas/ registro de jugadas por ronda
+        registroTotal, registroRonda = [],[]
 
-        #obtengo un jugador aleatorio para la jugada inicial
-        jugadorActual = random.choice(self.jugadores)
-        #obtengo la posicion del jugador inicial para poder seguir con los otros jugadores
-        posJugadorActual = self.jugadores.index(jugadorActual)
+        #Si es la jugada inicial se ejecutara esta condicion
+        if len(self.dominoesEnMesa) == 0:
+            #obtengo un jugador aleatorio para la jugada inicial
+            jugadorActual = random.choice(self.jugadores)
+            #obtengo la posicion del jugador inicial para poder seguir con los otros jugadores
+            posJugadorActual = self.jugadores.index(jugadorActual)
+            jugadaInicial = True
 
-        #sera True hasta que 1 jugador se quede sin fichas o el juego este tranchado
-        partida = True
-        while partida:
-            #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador
-            posJugada, fichaActual = jugadorActual.Jugar(self.dominoesEnMesa, pLateral, uLateral)
+        #El juego se ejecutara mientras que 1 jugador posea fichas o el juego este tranchado
+        JUEGO = True
+        while JUEGO:
+            
+            #limpiador de consola
+            cls()
+
+            if jugadorActual.status == "CPU":
+
+                #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador CPU
+                posJugada, fichaActual = jugadorActual.jugarCPU(self.dominoesEnMesa, pLateral, uLateral, jugadaInicial)
+
+            elif jugadorActual.status == "HM":
+                #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador HM
+                #muestra la mesa y las jugadas realizadas por otros jugadores antes que yo jugar
+                print('\n\n \t\t\t',self.mostrarMesa(),'\n\n', " Historial de Ronda: \n")
+                for e in registroRonda:
+                    if not "HM" in e:
+                        print(" ",e)
+                    
+                input()
+                posJugada, fichaActual = jugadorActual.jugarCPU(self.dominoesEnMesa, pLateral, uLateral)
+                #elimino la ronda visualisada
+                registroRonda = []
 
             #determina que el jugador no posee fichas jugables y pasa
             if not posJugada:
@@ -151,15 +163,8 @@ class Mesa(Ficha):
                 Ganador = jugadorActual
             
             #registro la jugada realizada
-            registro.append("JUGADOR: {} FICHAS: {}".format(jugadorActual.nombre, jugadorActual.fichasDelJugador())) 
-            registro.append("JUGADOR: {} JUGO: {}".format(jugadorActual.nombre, fichaActual))
-            registro.append("")
-            
-            #VISTA DETALLADA/ COMENTAR PARA UUSAR LA VISTA SIMPLE
-            # registro.append("")
-            # registro.append(self.mostrarMesa())
-            # registro.append("")
-
+            registroRonda.append("{0:3}: {1:6} JUGO: {2}".format(jugadorActual.status,jugadorActual.nombre, fichaActual))
+                       
             #si el jugador hizo una jugada se elimina la ficha del jugador
             if posJugada:
                 #remueve la ficha jugada del jugador
@@ -168,6 +173,8 @@ class Mesa(Ficha):
          
 
             if jugadorActual.totalFichas != 0 and passCont != 4:
+                #se realizo la primera jugada
+                jugadaInicial = False
 
                 #actualizo el valor de los terminales de la mesa de jugo despues de cada jugada
                 pLateral = self.dominoesEnMesa[0].ladoA
@@ -177,22 +184,26 @@ class Mesa(Ficha):
                 if posJugadorActual == 3:
                     posJugadorActual = -1
 
+                    #concateno el registroRonda al registroTotal
+                    registroTotal += registroRonda
+                    
+
                 #actualizo la posicion del jugador actual para pasar al siguiente jugador
                 posJugadorActual += 1
                 jugadorActual = self.jugadores[posJugadorActual]
 
             else:
 
-                #partida termino
-                partida = False
+                #TERMINO EL JUEGO
+                JUEGO = False
                 
                 #formas de ganar
                 if jugadorActual.totalFichas == 0:
 
                     if (fichaActual.ladoA == pLateral and fichaActual.ladoB == uLateral) or (fichaActual.ladoA == uLateral and fichaActual.ladoB == pLateral) and pLateral != uLateral:
-                        registro.append("Jugador: {} Domina con KAPICUA!!!".format(Ganador.nombre))
+                        registroRonda.append("Jugador: {} Domina con KAPICUA!!!".format(Ganador.nombre))
                     else:
-                        registro.append("Jugador: {} Domina!!!".format(Ganador.nombre))
+                        registroRonda.append("Jugador: {} Domina!!!".format(Ganador.nombre))
                 
                 if passCont == 4:
                     for jugador in self.jugadores:
@@ -200,17 +211,20 @@ class Mesa(Ficha):
                             Ganador = jugador
 
                     #menosPuntos(self.jugadores[0],self.jugadores[1],self.jugadores[2],self.jugadores[3])
-                    registro.append("Jugador: {} Gana por puntos, Juego Trancado !!!".format(Ganador.nombre))
+                    registroRonda.append("Jugador: {} Gana por puntos, Juego Trancado !!!".format(Ganador.nombre))
+                
+                #concateno el registroRonda al registroTotal
+                registroTotal += registroRonda
                     
 
         #muestro la mesa de juego y el registro de las jugadas/ VISTA SIMPLE
         
-        print()
-        for e in registro:
+        
+        for e in registroTotal:
             print(e)
         
-        print()
-        print(self.mostrarMesa())
+        # print()
+        # print(self.mostrarMesa())
 
             
 ###############################################
@@ -218,7 +232,7 @@ class Mesa(Ficha):
 ###############################################
 
 #jugadores
-pedro = Jugador("Pedro")
+pedro = Jugador("Pedro",'HM')
 juan = Jugador("Juan")
 manuel = Jugador("Manuel")
 vale = Jugador("Vale")

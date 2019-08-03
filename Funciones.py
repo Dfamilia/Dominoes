@@ -2,11 +2,21 @@
 ######### Librerias ################
 ####################################
 
+#os te permite interactuar con la consola
+import os
+#importando la clase ficha
 from Ficha import *
 
 ####################################
 ######### Funciones ################
 ####################################
+
+#funcion que limpia la pantalla de la consola
+def cls():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 #funcion que crea las fichas del domino
 def Dominoes(allFichas = [], ladoA = 0, ladoB = 0, cont = 0):
