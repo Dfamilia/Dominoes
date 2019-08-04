@@ -66,6 +66,7 @@ class Mesa(Ficha):
         self.jugadores =  jugadores
         self.dominoesEnMesa = Dominoes()
         
+        
     #metodo para revolver las fichas
     def revolverFichas(self):
         random.shuffle(self.dominoesEnMesa)
@@ -125,18 +126,17 @@ class Mesa(Ficha):
             if jugadorActual.status == "CPU":
 
                 #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador CPU
-                posJugada, fichaActual = jugadorActual.jugarCPU(self.dominoesEnMesa, pLateral, uLateral, jugadaInicial)
+                posJugada, fichaActual = jugadorActual.jugarCPU(pLateral, uLateral, jugadaInicial)
 
             elif jugadorActual.status == "HM":
                 #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador HM
                 #muestra la mesa y las jugadas realizadas por otros jugadores antes que yo jugar
-                print('\n\n \t\t\t',self.mostrarMesa(),'\n\n', " Historial de Ronda: \n")
+                print('\n\n \t\t\t',self.mostrarMesa(),'\n\n Historial de Ronda: \n')
                 for e in registroRonda:
                     if not "HM" in e:
                         print(" ",e)
                     
-                input()
-                posJugada, fichaActual = jugadorActual.jugarCPU(self.dominoesEnMesa, pLateral, uLateral)
+                posJugada, fichaActual = jugadorActual.jugarHM(pLateral, uLateral, jugadaInicial)
                 #elimino la ronda visualisada
                 registroRonda = []
 
@@ -240,14 +240,10 @@ vale = Jugador("Vale")
 #mesa
 mesa = Mesa(pedro, juan, manuel, vale)
 
-print("Prueba de suma de puntos")
-mesa.revolverFichas()
-mesa.repartirFichas()
-
-#print(jugadorPuntos(pedro))
 
 print("estamos en la mesa de jugo")
 mesa.playDomino()
+# pedro.jugarHM(3,3)
 
 ### IDEAS ### 
 #AminMoya001
