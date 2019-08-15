@@ -92,7 +92,7 @@ class Jugador:
     @property
     def __mostrarOpcionDelJugador(self):
         # listFicha = []
-        mano = "\n\n  Mis fichas: | "
+        mano = "\n\n  | "
         cont = 1
 
         for e in self._getFichasJugador:
@@ -111,7 +111,7 @@ class Jugador:
         if jugadaInicial:
             
             while True:
-                digito = int(input(f"\n  Elige la ficha presionando digitos 1 al {len(self._getFichasJugador)} de acuerdo a la posicion: "))
+                digito = int(input(f"\n  Juega digitando el numero a la izquierda de la ficha (1 al {len(self._getFichasJugador)}): "))
                 if digito > 0 and digito <= len(self._getFichasJugador):
                     #retorno la el lado de terminal en cual se jugara la ficha, la ficha                    
                     return "terminalDerecho", self._getFichasJugador[digito-1]
@@ -125,7 +125,7 @@ class Jugador:
 
                 #ciclo solo retorna
                 while True:
-                    digito = input(f"\n  Elige la ficha presionando digitos 1 al {len(self._getFichasJugador)} de acuerdo a la posicion: ")
+                    digito = input(f"\n  Juega digitando el numero a la izquierda de la ficha (1 al {len(self._getFichasJugador)}): ")
                     # si el digito ingresado por consola es numerico, digito es mayor que cero y digito es menor igual a la cantidad de fichas del jugador
                     if digito.isdigit() and int(digito) > 0 and int(digito) <= len(self._getFichasJugador):
                         #se obtiene la ficha que se va a jugar

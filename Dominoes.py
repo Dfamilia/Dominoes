@@ -110,8 +110,8 @@ class Mesa(Ficha, Jugador):
             for jugador in self.__getJugadores:
                 totalpuntos += jugador._getTotalPuntosJugador
             
-                if ganoPor == "CAPICUA":
-                    totalpuntos += 25
+            if ganoPor == "CAPICUA":
+                totalpuntos += 25
 
             jugadorActual._setPuntosGanados(totalpuntos)
             return jugadorActual, "{}, Gana por: {}! la partida.. Gana: {} puntos".format(jugadorActual._getNombreJugador, ganoPor, totalpuntos)
@@ -133,8 +133,19 @@ class Mesa(Ficha, Jugador):
             tabla2 = "{} Tranca el juego; {} Gana la partida por menos puntos; Gana: {} puntos".format(jugadorActual._getNombreJugador,jugadorGanador._getNombreJugador, totalpuntos)
             return jugadorGanador, tabla1, tabla2
     
-    def __mostrarTablaDeResultados(self):
-        pass
+    #METODO: muestra el logo de DOMINOES y los puntos ganados por los jugadores
+    @property
+    def __mostrarBanner(self):
+        #cabecera del proyecto
+        banner()
+        print("\n*****************************************************************************************************************************************************************************************************")
+        tabla = " *******"
+        for jugador in self.__getJugadores:
+            tabla += f"| {jugador._getStatusJugador}: {jugador._getNombreJugador}: [{jugador._getPuntosGanadosJugador}] |**************************"
+        
+        print(tabla)
+        print("*****************************************************************************************************************************************************************************************************")
+
 
     #METODO: ejecuta el juego
     def jugarDomino(self):
@@ -164,9 +175,6 @@ class Mesa(Ficha, Jugador):
             Partida = True
             while Partida:
 
-                #limpiador de consola
-                # cls()
-
                 #Si es la jugada inicial se ejecutara este script
                 if len(self.__getDominosEnMesa) == 0:
                     jugadaInicial = True
@@ -189,12 +197,13 @@ class Mesa(Ficha, Jugador):
                 
                 #jugador humano
                 elif jugadorActual._getStatusJugador == "HM":
+                    #limpio la pantalla y muestro el banner
                     cls()
-                    header()
+                    self.__mostrarBanner
 
                     #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador HM
                     #muestra la mesa y las jugadas realizadas por otros jugadores antes que yo jugar
-                    print('\n\n ',self.__mostrarMesa(),'\n\n  Historial de Ronda: \n')
+                    print('\n\n ',self.__mostrarMesa(),'\n\n')
                     for e in registroRonda:
                         if not "HM" in e:
                             print(" ",e)
@@ -223,11 +232,11 @@ class Mesa(Ficha, Jugador):
                 #registro la jugada realizada
                 registroRonda.append("{0:3}: {1:6} JUGO: {2}".format(jugadorActual._getStatusJugador,jugadorActual._getNombreJugador, fichaActual))
                 
-                ### front ###
-                cls()
-                header()
-                print('\n\n ',self.__mostrarMesa(),'\n')
-                input(f"  {jugadorActual._getNombreJugador} jugo: {fichaActual}")
+                # ### front ###
+                # cls()
+                # self.__mostrarBanner
+                # print('\n\n ',self.__mostrarMesa(),'\n')
+                # input(f"  {jugadorActual._getNombreJugador} jugo: {fichaActual}")
                         
                 #si el jugador hizo una jugada se elimina la ficha del jugador
                 if posJugada:
@@ -288,11 +297,13 @@ class Mesa(Ficha, Jugador):
                     Partida = False
                     #concateno el registroRonda al registroTotal
                     registroTotal += registroRonda
- 
-                    print("\n\n")
+                    
+                    #muestro el registro de jugadas
+                    print("\n")
                     for e in registroTotal:
                         print("  ",e)
-
+                    
+                    #devuelvo las fichas que no fueron jugadas por cada jugador
                     for jugador in self.__getJugadores:
                         self.__fichasEnMesa += jugador._devolverFichasDelJugador()
 
