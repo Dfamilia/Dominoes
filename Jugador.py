@@ -20,7 +20,7 @@ class Jugador:
     ####################################
     
     #METODO: agrega una ficha a la mano del jugador
-    def _addFicha(self, ficha):
+    def _setFichas(self, ficha):
         self.__fichas.append(ficha)
         self.__totalFichas += 1
    
@@ -58,7 +58,8 @@ class Jugador:
         return self.__totalFichas
 
     #METODO: retorna la cantidad de puntos ganados por el jugador
-    def _getPuntosGanados(self):
+    @property
+    def _getPuntosGanadosJugador(self):
         return self.__puntosGanados
 
     #METODO: retorna la cantidad de puntos que existen en las fichas que posee el jugador
@@ -78,6 +79,14 @@ class Jugador:
             mano += str(e) + "  "
         mano =mano[:len(mano)-1] + "|"
         return mano
+    
+    #METODO: elimina las fichas que posee el jugador    
+    def _devolverFichasDelJugador(self):
+        devolver = []
+        while len(self._getFichasJugador) > 0:
+            devolver.append(self._getFichasJugador.pop())
+            self.__totalFichas -= 1 
+        return devolver
 
     #METODO: retorna una vista detallada de las fichas que posee el jugador
     @property
