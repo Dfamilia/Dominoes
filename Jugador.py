@@ -32,6 +32,10 @@ class Jugador:
     #METODO: guarda el total de puntos que gana el jugador por jugada
     def _setPuntosGanados(self, puntos):
         self.__puntosGanados += puntos
+
+    #METODO: limpiar los puntos que ha ganado el jugador
+    def _setLimpiarPuntos(self):
+        self.__puntosGanados = 0
     
     ####################################
     ######### GETTERS ##################
@@ -92,7 +96,7 @@ class Jugador:
     @property
     def __mostrarOpcionDelJugador(self):
         # listFicha = []
-        mano = "\n\n  | "
+        mano = "\n  | "
         cont = 1
 
         for e in self._getFichasJugador:
@@ -127,27 +131,31 @@ class Jugador:
                 while True:
                     digito = input(f"\n  Juega digitando el numero a la izquierda de la ficha (1 al {len(self._getFichasJugador)}): ")
                     # si el digito ingresado por consola es numerico, digito es mayor que cero y digito es menor igual a la cantidad de fichas del jugador
+                    
                     if digito.isdigit() and int(digito) > 0 and int(digito) <= len(self._getFichasJugador):
                         #se obtiene la ficha que se va a jugar
                         fichaActual = self._getFichasJugador[int(digito)-1]
+                        
                         #si los terminales de la mesa no son iguales y cada lado de la ficha a jugar es igual a los terminales, el usuario decide en que lado quiere jugar
-                        if (pLateral != uLateral) and (fichaActual._getLadoA == pLateral and fichaActual._getLadoB == uLateral) or (fichaActual._getLadoA == uLateral and fichaActual._getLadoB == pLateral):       
+                        if (pLateral != uLateral) and (fichaActual._getLadoA == pLateral and fichaActual._getLadoB == uLateral) or (fichaActual._getLadoA == uLateral and fichaActual._getLadoB == pLateral):    
+
                             while True:
                                 #el usuario elige el lado
                                 option = input(f"\n  ATENCION|Puedes jugar a ambos lados: [1->IZQ | 2->DER]: ")
+                                
                                 #si el digito ingresado es numerico y es igual a 1 entonces se jugara por la izquierda
                                 if option.isdigit() and int(option) == 1:                              
                                     if pLateral == fichaActual._getLadoA:
                                         fichaActual._girarFicha()                           
+                                    
                                     # retorno la el lado de terminal en cual se jugara la ficha, la ficha
                                     return "terminalIzquierdo", fichaActual
-
                                 #si el digito ingresado es numerico y es igual a 1 entonces se jugara por la derecha
                                 elif option.isdigit() and int(option) == 2:
+                                    
                                     #si la ficha existente esta del lado incorrecto al que se puede jugar, la ficha se voltea
                                     if uLateral == fichaActual._getLadoB:
                                         fichaActual._girarFicha()
-
                                     #retorno la el lado de terminal en cual se jugara la ficha, la ficha                    
                                     return "terminalDerecho", fichaActual
 
@@ -159,15 +167,14 @@ class Jugador:
                             #si la ficha existente esta del lado incorrecto al que se puede jugar, la ficha se voltea
                             if uLateral == fichaActual._getLadoB:
                                 fichaActual._girarFicha()
-
                             #retorno la el lado de terminal en cual se jugara la ficha, la ficha                    
                             return "terminalDerecho", fichaActual
 
                         elif pLateral == fichaActual._getLadoA or pLateral == fichaActual._getLadoB:
+                            
                             #si la ficha existente esta del lado incorrecto al que se puede jugar, la ficha se voltea                     
                             if pLateral == fichaActual._getLadoA:
-                                fichaActual._girarFicha()
-                            
+                                fichaActual._girarFicha()                         
                             # retorno la el lado de terminal en cual se jugara la ficha, la ficha
                             return "terminalIzquierdo", fichaActual
 
