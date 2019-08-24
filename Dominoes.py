@@ -26,21 +26,6 @@ class Mesa(Ficha, Jugador):
     ######### SETTERS ##################
     ####################################
 
-    #METODO: crea e inicializa las 28 fichas del domino en la mesa para que se pueda jugar
-    @property
-    def __iniciarDominoes(self):
-        a, b, totalFichas, fichas, self.__fichasEnMesa= 0, 0, 0, [], []
-
-        while totalFichas < 28:
-            fichas.append(Ficha(a,b))            
-            if a == b:
-                a += 1
-                b = 0
-            else:
-                b += 1
-            totalFichas += 1
-        self.__fichasEnMesa = fichas
-
     #METODO: registra los jugadores
     def _setRegistrarJugadores(self, jugadores):
 
@@ -56,15 +41,6 @@ class Mesa(Ficha, Jugador):
     def _setJugarHasta(self, jugarHasta):
         self.__jugarHasta = jugarHasta        
         
-    #METODO: agrega la ficha desde el jugador a la mesa por el terminal derecho
-    def __agregarPorDer(self, ficha):
-        self.__fichasEnMesa.append(ficha)
-
-    #METODO: agrega la ficha desde el jugador a la mesa por el terminal izquierdo
-    def __agregarPorIzq(self, ficha):
-        self.__fichasEnMesa.insert(0, ficha)
-
-
     ####################################
     ######### GETTERS ##################
     ####################################
@@ -88,7 +64,26 @@ class Mesa(Ficha, Jugador):
     @property
     def __getjugarHasta(self):
         return self.__jugarHasta
+
+    ####################################
+    ######### METODOS ##################
+    ####################################
         
+    #METODO: crea e inicializa las 28 fichas del domino en la mesa para que se pueda jugar
+    @property
+    def __crearDominoes(self):
+        a, b, totalFichas, fichas, self.__fichasEnMesa= 0, 0, 0, [], []
+
+        while totalFichas < 28:
+            fichas.append(Ficha(a,b))            
+            if a == b:
+                a += 1
+                b = 0
+            else:
+                b += 1
+            totalFichas += 1
+        self.__fichasEnMesa = fichas
+
     #METODO: revolver las fichas
     @property
     def __revolverFichas(self):
@@ -102,6 +97,86 @@ class Mesa(Ficha, Jugador):
             while jugador._getTotalFichasJugador < 7:
                 jugador._setFichas(self.__fichasEnMesa.pop())
     
+    #METODO: agrega la ficha desde el jugador a la mesa por el terminal derecho
+    def __agregarPorDer(self, ficha):
+        self.__fichasEnMesa.append(ficha)
+
+    #METODO: agrega la ficha desde el jugador a la mesa por el terminal izquierdo
+    def __agregarPorIzq(self, ficha):
+        self.__fichasEnMesa.insert(0, ficha)
+    
+    #METODO: retorna el jugador inicial de cada partida
+    def __jugadorInicial(self, ganador = None):
+        #se toma el ganador de la primera partida en adelante
+        if ganador:
+            posJugadorActual = self.__getJugadores.index(ganador)
+            return ganador, posJugadorActual
+            
+        else:
+            #obtengo un jugador aleatorio para la jugada inicial
+            jugadorActual = choice(self.__getJugadores)
+            #obtengo la posicion del jugador inicial para poder seguir con los otros jugadores
+            posJugadorActual = self.__getJugadores.index(jugadorActual)  
+            return jugadorActual, posJugadorActual
+    
+    #METODO: se ejecuta cuando es el turno del jugadorCPU
+    def __turnoJugadorCPU(self, pLateral, uLateral, jugadaInicial, jugadorActual):
+        
+        #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador CPU
+        posJugada, fichaActual = jugadorActual._jugarCPU(pLateral, uLateral, jugadaInicial)
+
+        if self.__getModo == "CPUvsCPU":
+            # ### front ###
+            cls()
+            self.__mostrarTablaResultados
+            print('\n\n ',self.__mostrarMesa(),'\n')
+            input(f"  {jugadorActual._getNombreJugador} jugo: {fichaActual}")
+       
+        return posJugada, fichaActual
+
+    #METODO: se ejecuta cuando es el turno del jugador humano
+    def __turnoJugadorHM(self, registroRonda, pLateral, uLateral, jugadaInicial, jugadorActual):
+
+        #limpio la pantalla y muestro el banner
+        cls()
+        self.__mostrarTablaResultados
+
+        #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador HM
+        #muestra la mesa y las jugadas realizadas por otros jugadores antes que yo jugar
+        print('\n\n ',self.__mostrarMesa(),'\n')
+
+        #observo las jugadas de los demas jugadores previos
+        hr("\n")        
+        for e in registroRonda:
+            if not "HM" in e:
+                print(" ",e)
+        hr("")        
+        
+        return jugadorActual._jugarHM(pLateral, uLateral, jugadaInicial)
+
+    #METODO: ejecuta la jugada que hace el jugador
+    def __jugadaDelJugadorEnMesa(self, posJugada, fichaActual):
+
+        #determina que el jugador jugara por el terminal derecho
+        if (posJugada == "terminalDerecho"):             
+            #realizo la jugada
+            self.__agregarPorDer(fichaActual)
+        
+        #determina que el jugador jugara por el terminal izquierdo
+        if (posJugada == "terminalIzquierdo"):
+            self.__agregarPorIzq(fichaActual)
+
+    def __puntosGanadosPorPases(self, jugadorActual, registroRonda):
+
+        if (jugadorActual._getPuntosGanadosJugador + 25) < self.__getjugarHasta:
+            jugadorActual._setPuntosGanados(25)
+            print("\n\n  {} consigue 25 por pases!!!".format(jugadorActual._getNombreJugador))
+            input()
+            registroRonda.append("Jugador: {} consigue 25 por pases!!!".format(jugadorActual._getNombreJugador))
+        else:
+            print("\n\n  {} no le caben los 25!!!".format(jugadorActual._getNombreJugador))
+            input()
+
     #METODO: muestra las fichas jugadas en la mesa de juego
     def __mostrarMesa(self):
 
@@ -112,7 +187,7 @@ class Mesa(Ficha, Jugador):
         return mesa
 
     #METODO: ingresa los puntos ganados por los jugadores en cada jugadas y retorna resultados
-    def __resultadosPorPartida(self, jugadorActual, ganoPor):
+    def __modosDeGanarPartida(self, jugadorActual, ganoPor):
 
         if ganoPor == "DOMINACION" or ganoPor == "CAPICUA":
             totalpuntos = 0
@@ -129,20 +204,18 @@ class Mesa(Ficha, Jugador):
 
         elif ganoPor == "TRANQUE":
             jugadorGanador = jugadorActual
-            tabla1 = "\n"
-            tabla2 = ""
-            totalpuntos = 0
+            tablaJugadorPuntos, tablaJugadorGanador, totalpuntos = "\n","", 0
             
             for jugador in self.__getJugadores:
-                tabla1 += "{} tiene: {} puntos; ".format(jugador._getNombreJugador, jugador._getTotalPuntosJugador)
+                tablaJugadorPuntos += "{} tiene: {} puntos; ".format(jugador._getNombreJugador, jugador._getTotalPuntosJugador)
                 totalpuntos += jugador._getTotalPuntosJugador
                 
                 if jugador._getTotalPuntosJugador < jugadorGanador._getTotalPuntosJugador:
                     jugadorGanador = jugador
             
             jugadorGanador._setPuntosGanados(totalpuntos)
-            tabla2 = "{} Tranca el juego; {} Gana la partida por menos puntos; Gana: {} puntos".format(jugadorActual._getNombreJugador,jugadorGanador._getNombreJugador, totalpuntos)
-            return jugadorGanador, tabla1, tabla2
+            tablaJugadorGanador = "{} Tranca el juego; {} Gana la partida por menos puntos; Gana: {} puntos".format(jugadorActual._getNombreJugador,jugadorGanador._getNombreJugador, totalpuntos)
+            return jugadorGanador, tablaJugadorPuntos, tablaJugadorGanador
     
     #METODO: muestra el logo de DOMINOES y los puntos ganados por los jugadores
     @property
@@ -150,20 +223,20 @@ class Mesa(Ficha, Jugador):
         #cabecera del proyecto
         banner()
 
-        print("\n*****************************************************************************************************************************************************************************************************")
+        hr("\n")
         tabla = " *******"
         for jugador in self.__getJugadores:
             tabla += f"| {jugador._getStatusJugador}: {jugador._getNombreJugador}: [{jugador._getPuntosGanadosJugador}] |**************************"
         
         print(tabla)
-        print("*****************************************************************************************************************************************************************************************************")
+        hr("")
 
 
     #METODO: ejecuta el juego
     def _jugarDomino(self):
 
         #inicializo los dominos en la mesa
-        self.__iniciarDominoes
+        self.__crearDominoes
         #guarda el jugador que realizo la jugada ganadora
         Ganador = None
 
@@ -174,107 +247,54 @@ class Mesa(Ficha, Jugador):
             self.__revolverFichas
             #reparto las fichas entre los jugadores
             self.__repartirFichas            
-            #lleva un conteo de pases para saber cuando el juego esta trancado
-            passCont = 0
-            #variable jInicial
-            jugadaInicial = False
-            #pLateral obtiene el valor del terminal izquierdo y derecho de la mesa que se puede hacer jugada
-            pLateral,uLateral = None,None
-            #lleva un registro de las jugadas total realizadas/ registro de jugadas por ronda
-            registroTotal, registroRonda = [],[]
             
-            #La partida se ejecutara que un jugador gane la partida por DOMINACION, CAPICUA O TRANQUE
-            Partida = True
-            while Partida:
+            #cicloPartida = sera verdadera hasta que un jugador gane la partida por DOMINACION, CAPICUA O TRANQUE
+            #passCont = lleva un conteo de pases para saber cuando el juego esta trancado
+            #pLateral/uLateral = obtienen el valor del terminal izquierdo y derecho de la primera y ultima ficha de la mesa que se puede hacer jugada
+            #registroTotal = lleva un registro de todas las jugadas realizadas
+            #registroRonda = lleva un registro de todas las jugadas realizadas en cada ronda
+            cicloPartida, passCont, pLateral, uLateral, registroPartidas, registroRonda  = True, 0, None, None, [], []
+
+            while cicloPartida:
+
+                #jugadaInicial = verifica si el jugador esta realizando un jugada inicial
+                jugadaInicial = False
 
                 #Si es la jugada inicial se ejecutara este script
                 if len(self.__getDominosEnMesa) == 0:
                     jugadaInicial = True
-                    
-                    #se toma el ganador de la primera partida en adelante
-                    if Ganador:
-                        jugadorActual = Ganador
-                        posJugadorActual = self.__getJugadores.index(jugadorActual)
-                        
-                    else:
-                        #obtengo un jugador aleatorio para la jugada inicial
-                        jugadorActual = choice(self.__getJugadores)
-                        #obtengo la posicion del jugador inicial para poder seguir con los otros jugadores
-                        posJugadorActual = self.__getJugadores.index(jugadorActual)      
-                
+                    jugadorActual, posJugadorActual = self.__jugadorInicial(Ganador)
+                                       
                 #jugador automatico
                 if jugadorActual._getStatusJugador == "CPU":
-                    #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador CPU
-                    posJugada, fichaActual = jugadorActual._jugarCPU(pLateral, uLateral, jugadaInicial)
-
-                    if self.__getModo == "CPUvsCPU":
-                        # ### front ###
-                        cls()
-                        self.__mostrarTablaResultados
-                        print('\n\n ',self.__mostrarMesa(),'\n')
-                        input(f"  {jugadorActual._getNombreJugador} jugo: {fichaActual}")
+                    posJugada, fichaActual = self.__turnoJugadorCPU(pLateral, uLateral, jugadaInicial, jugadorActual)                   
                 
                 #jugador humano
                 elif jugadorActual._getStatusJugador == "HM":
-                    #limpio la pantalla y muestro el banner
-                    cls()
-                    self.__mostrarTablaResultados
+                    posJugada, fichaActual = self.__turnoJugadorHM(registroRonda, pLateral, uLateral, jugadaInicial, jugadorActual)
 
-                    #recibo la posicion de la jugada y la ficha del metodo Jugar del Jugador HM
-                    #muestra la mesa y las jugadas realizadas por otros jugadores antes que yo jugar
-                    print('\n\n ',self.__mostrarMesa(),'\n')
-                    print("\n*****************************************************************************************************************************************************************************************************")
-                    for e in registroRonda:
-                        if not "HM" in e:
-                            print(" ",e)
-                    print("*****************************************************************************************************************************************************************************************************")
-                    posJugada, fichaActual = jugadorActual._jugarHM(pLateral, uLateral, jugadaInicial)
                     #elimino la ronda visualisada
                     registroRonda = []
 
-                #determina que el jugador no posee fichas jugables y pasa
-                if not posJugada:
-                    #actualizo el contador de pases
-                    passCont += 1
-                
-                #determina que el jugador jugara por el terminal derecho
-                if (posJugada == "terminalDerecho"):             
-                    #realizo la jugada
-                    self.__agregarPorDer(fichaActual)
-                    #mantengo el nombre del jugador que realizo la ultima jugada
-                    Ganador = jugadorActual
-                
-                #determina que el jugador jugara por el terminal izquierdo
-                if (posJugada == "terminalIzquierdo"):
-                    self.__agregarPorIzq(fichaActual)
-                    Ganador = jugadorActual
-                
-                #registro la jugada realizada
-                registroRonda.append("{0:3}: {1:6} JUGO: {2}".format(jugadorActual._getStatusJugador,jugadorActual._getNombreJugador, fichaActual))
-            
-                        
-                #si el jugador hizo una jugada se elimina la ficha del jugador
+                #determina si el jugador realizo una jugada o realizo un pase
                 if posJugada:
+                    self.__jugadaDelJugadorEnMesa(posJugada, fichaActual)
+                    Ganador = jugadorActual
+
+                    #si el jugador pasa al resto de jugadores en su proximo turno obtiene 25 puntos por pases                    
                     if passCont == 3:
-                        if (jugadorActual._getPuntosGanadosJugador + 25) < self.__getjugarHasta:
-                            jugadorActual._setPuntosGanados(25)
-                            print("\n\n  {} consigue 25 por pases!!!".format(jugadorActual._getNombreJugador))
-                            input()
-                            registroRonda.append("Jugador: {} consigue 25 por pases!!!".format(Ganador._getNombreJugador))
-                        else:
-                            print("\n\n  {} no le caben los 25!!!".format(jugadorActual._getNombreJugador))
-                            input()
-
-
+                        self.__puntosGanadosPorPases(jugadorActual, registroRonda)
+                
                     #reseteo el contador de pases
                     passCont = 0
-                    #remueve la ficha jugada del jugador
-                    jugadorActual._delFichaJugada(fichaActual)
-            
+                else:
+                    #actualizo el contador de pases
+                    passCont += 1                    
+
+                #registro la jugada realizada
+                registroRonda.append("{0:3}: {1:6} JUGO: {2}".format(jugadorActual._getStatusJugador,jugadorActual._getNombreJugador, fichaActual))
 
                 if jugadorActual._getTotalFichasJugador != 0 and passCont != 4:
-                    #se realizo la primera jugada
-                    jugadaInicial = False
 
                     #actualizo el valor de los terminales de la mesa de jugo despues de cada jugada
                     pLateral = self.__getDominosEnMesa[0]._getLadoA
@@ -285,7 +305,7 @@ class Mesa(Ficha, Jugador):
                         posJugadorActual = -1
 
                         #concateno el registroRonda al registroTotal
-                        registroTotal += registroRonda                   
+                        registroPartidas += registroRonda                   
 
                     #actualizo la posicion del jugador actual para pasar al siguiente jugador
                     posJugadorActual += 1
@@ -295,77 +315,33 @@ class Mesa(Ficha, Jugador):
                     #formas de ganar
                     if jugadorActual._getTotalFichasJugador == 0:
                         if (pLateral != uLateral) and (fichaActual._getLadoA == pLateral and fichaActual._getLadoB == uLateral) or (fichaActual._getLadoA == uLateral and fichaActual._getLadoB == pLateral):
-                            Ganador, resultado = self.__resultadosPorPartida(jugadorActual,"CAPICUA")
-                            registroRonda.append(resultado)
+                            Ganador, resultado = self.__modosDeGanarPartida(jugadorActual,"CAPICUA")
+                            registroPartidas.append(resultado)
 
                         else:
-                            Ganador, resultado = self.__resultadosPorPartida(jugadorActual,"DOMINACION")
-                            registroRonda.append(resultado)
-                    
+                            Ganador, resultado = self.__modosDeGanarPartida(jugadorActual,"DOMINACION")
+                            registroPartidas.append(resultado)
+                     
                     if passCont == 4:
-                        Ganador, tabla1, tabla2 = self.__resultadosPorPartida(jugadorActual,"TRANQUE")
-                        registroRonda.append(tabla1)
-                        registroRonda.append(tabla2)
+                        Ganador, tabla1, tabla2 = self.__modosDeGanarPartida(jugadorActual,"TRANQUE")
+                        registroPartidas.append(tabla1)
+                        registroPartidas.append(tabla2)
 
-                    #TERMINO EL JUEGO
-                    Partida = False
-                    #concateno el registroRonda al registroTotal
-                    registroTotal += registroRonda
-                    
+                    #TERMINO PARTIDA
+                    cicloPartida = False
+                                        
                     #muestro el registro de jugadas
                     print("\n")
-                    for e in registroTotal:
+                    for e in registroPartidas:
                         print("  ",e)
                     
                     #devuelvo las fichas que no fueron jugadas por cada jugador
                     for jugador in self.__getJugadores:
-                        self.__fichasEnMesa += jugador._devolverFichasDelJugador()
+                        self.__fichasEnMesa += jugador._devolverFichasDelJugador
 
                     input("\n\n  FIN de partida, Devolviendo las fichas sobrantes de los jugadores a la mesa, presiona cualquier tecla para seguir jugando....")
         
         for jugador in self.__getJugadores:
-            jugador._setLimpiarPuntos()
+            jugador._borrarPuntosGanados
         return Ganador
             
-###############################################
-########### Pruebas ###########################
-###############################################
-
-#jugadores
-# pedro = Jugador("Pedro",'HM')
-# juan = Jugador("Juan")
-# manuel = Jugador("Manuel")
-# vale = Jugador("Vale")
-
-# #mesa
-# mesa = Mesa()
-# # # mesa.
-# # # print(mesa._getDominosEnMesa)
-# # # for e in mesa._getDominosEnMesa:
-# # #     e.girar()
-# # #     print(e)
-
-# # # mesa.
-
-
-# # # print(mesa.getPrueba())
-
-
-# jugadores = [["darlin","HM"],["pedro", "CPU"],["jose", "CPU"],["alejandro", "CPU"]]
-# mesa.registrarJugadores(jugadores)
-
-# # print("estamos en la mesa de jugo")
-# mesa.jugarDomino()
-
-### IDEAS ### 
-#AminMoya001
-#829-645-2685
-
-
-#si se juega de 2, poner una variable como reserva de las fichas restante y adicionarle el revolver simulando cojida de ficha aleatoria, ya que se utilizara el pop() para obtenerla
-
-##Dante
-
-##dividir el proyecto por archivos, menu, gameLoope, resultados
-##hacer que el usuario juegue, 1, 2 jugadores
-##si es posible hacerlo grafico
