@@ -122,13 +122,15 @@ class Jugador:
             option = input(f"\n  ATENCION|Puedes jugar a ambos lados: [1->IZQ | 2->DER]: ")
             
             #si el digito ingresado es numerico y es igual a 1 entonces se jugara por la izquierda
-            if option.isdigit() and int(option) == 1 and terminalIzq == fichaActual._getLadoA:                              
-                fichaActual._girarFicha()                           
+            if option.isdigit() and int(option) == 1:
+                if terminalIzq == fichaActual._getLadoA:
+                    fichaActual._girarFicha()                           
                 return "terminalIzquierdo", fichaActual
             
             #si el digito ingresado es numerico y es igual a 1 entonces se jugara por la derecha
-            elif option.isdigit() and int(option) == 2 and terminalDer == fichaActual._getLadoB:
-                fichaActual._girarFicha()                   
+            if option.isdigit() and int(option) == 2:
+                if terminalDer == fichaActual._getLadoB:
+                    fichaActual._girarFicha()                   
                 return "terminalDerecho", fichaActual
 
             #si el digito ingresado no cumple los requisitos imprime este scrip
@@ -147,7 +149,7 @@ class Jugador:
                 fichaActual = self._getFichasJugador[int(digito)-1]
                 
                 #si los terminales de la mesa no son iguales y cada lado de la ficha a jugar es igual a ambos terminales, el usuario decide en que lado quiere jugar
-                if (terminalIzq != terminalDer) and (fichaActual._getLadoA == terminalIzq and fichaActual._getLadoB == terminalDer) or (fichaActual._getLadoA == terminalDer and fichaActual._getLadoB == terminalIzq): 
+                if (terminalIzq != terminalDer) and ((fichaActual._getLadoA == terminalIzq and fichaActual._getLadoB == terminalDer) or (fichaActual._getLadoA == terminalDer and fichaActual._getLadoB == terminalIzq)): 
 
                     return self.__jugadaAmbosTerminalesHM(terminalIzq, terminalDer, fichaActual)   
                 

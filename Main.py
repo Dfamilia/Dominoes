@@ -17,9 +17,9 @@ class Menu(Mesa):
         hmName = input(f"{enter}{tab[0:-1]}Nombre del jugador (Default = 'Guess'): ")
 
         if hmName:
-            players = [[hmName,"HM"],["pedro", "CPU"],["jose", "CPU"],["alejandro", "CPU"]]
+            players = [[hmName,"HM"],["Pedro", "CPU"],["Jose", "CPU"],["Mario", "CPU"]]
         else:
-            players = [["Guess","HM"],["pedro", "CPU"],["jose", "CPU"],["alejandro", "CPU"]]
+            players = [["Guess","HM"],["Pedro", "CPU"],["Jose", "CPU"],["Mario", "CPU"]]
         
         return players
     
@@ -74,7 +74,7 @@ class Menu(Mesa):
                 GAME = True
                 while GAME:
                     # self,self.__playTo(tab, enter)
-                    Mesa._setJugarHasta(self,20)
+                    Mesa._setJugarHasta(self,self.__playTo(tab, enter))
                     Ganador = Mesa._jugarDomino(self)
                     
                     cls()
