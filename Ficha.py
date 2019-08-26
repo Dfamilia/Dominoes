@@ -26,9 +26,11 @@ class Ficha:
     @property
     def _getFicha(self):
         return self.__ficha
+
     ####################################
     ######### METODOS ##################
     ####################################
+    
     #METODO: intercambia los valores de la ficha
     def _girarFicha(self):
 

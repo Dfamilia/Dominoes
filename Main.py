@@ -9,7 +9,7 @@ from Dominoes import *
 class Menu(Mesa):
 
     #METODO: ejecuta la opcion HMvsCPUs
-    def __HMvsCPUs(self, tab, enter):
+    def __setNombresHMvsCPUs(self, tab, enter):
         #limpio la pantalla
         cls()
         banner()
@@ -42,6 +42,31 @@ class Menu(Mesa):
             print(f"{enter}{tab[0:-2]}Digito fuera de rango, favor elige de nuevo...")
             choice = input(f"{tab[0:-2]}Juego hasta: | 1-> 100 puntos | 2-> 150 puntos | 3->200 puntos | ")
 
+    #METODO: ejecuta el ciclo de juego del modo de jugego HMvsCPUs
+    def __cicloDeJuegoHMvsCPUs(self, tab, enter):
+        
+        Mesa._setRegistrarJugadores(self,self.__setNombresHMvsCPUs(tab, enter))
+        Mesa._setModoJuego(self,"1vs3")
+        
+        #mientras el jugador quiera seguir jugando
+        GAME = True
+        while GAME:
+            # self,self.__playTo(tab, enter)
+            Mesa._setJugarHasta(self,self.__playTo(tab, enter))
+            Ganador = Mesa._jugarDomino(self)
+            
+            cls()
+            banner()
+            print(f"{enter}{tab[0:-1]}**************************************")
+            print(f"{tab}*   GANADOR {Ganador._getNombreJugador} *")
+            print(f"{tab[0:-1]}**************************************")
+
+            option = input(f"{tab[0:-4]} PRESIONE CUALQUIER TECLA PARA VOLVER A JUGAR, DE LO CONTRARIO PRESIONE ( 1 ) PARA SALIR...: ")
+
+            if option =="1":
+                GAME = False
+        return "Done"
+
     #METODO: ejecuta el juego    
     def startGame(self):
 
@@ -50,14 +75,9 @@ class Menu(Mesa):
         banner()
 
         #auxiliar para los saltos de linea
-        enter = ""
-        for i in range(5):
-            enter += "\n"
-
-        #auxiliar para los tabs
-        tab = ""
-        for i in range(35):
-            tab +="\t"
+        enter = auxEnter(5)
+        #auxiliar para uso de tabs
+        tab = auxTab(35)
 
         print(f"{enter}{tab[0:-1]} BIENVENIDO AL MENU DE JUEGO DE DOMINÓ: \n\n\n\n{tab} 1-> HM vs CPUs\n\n{tab} 00-> SALIR DEL JUEGO\n\n\n")
         digito = input(f"{tab[0:-1]} Digite el numero de la opcion a realizar: ")
@@ -67,26 +87,8 @@ class Menu(Mesa):
             #HMvsCPUs
             if digito == "1":
                 
-                Mesa._setRegistrarJugadores(self,self.__HMvsCPUs(tab, enter))
-                Mesa._setModoJuego(self,"1vs3")
-
-                #mientras el jugador quiera seguir jugando
-                GAME = True
-                while GAME:
-                    # self,self.__playTo(tab, enter)
-                    Mesa._setJugarHasta(self,self.__playTo(tab, enter))
-                    Ganador = Mesa._jugarDomino(self)
-                    
-                    cls()
-                    banner()
-                    print(f"{enter}{tab[0:-1]}**************************************")
-                    print(f"{tab}*   GANADOR {Ganador._getNombreJugador} *")
-                    print(f"{tab[0:-1]}**************************************")
-
-                    option = input(f"{tab[0:-4]} PRESIONE CUALQUIER TECLA PARA VOLVER A JUGAR, DE LO CONTRARIO PRESIONE ( 1 ) PARA SALIR...: ")
-
-                    if option =="1":
-                        GAME = False
+                #ejecuta el ciclo de juego 
+                self.__cicloDeJuegoHMvsCPUs(tab, enter)
 
             cls()
             banner()
@@ -96,7 +98,7 @@ class Menu(Mesa):
 
 
 ###############################################
-########### Pruebas ###########################
+########### EJECUCION DEL PROGRAMA ############
 ###############################################
 
 menu = Menu()
