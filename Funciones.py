@@ -32,17 +32,17 @@ def banner():
     hr()
     
 #FUNCION: funciona como auxiliar para cantidad de saltos de lineas
-def auxTab(tab = 0):
+def auxTab(tabCont = 0):
     #auxiliar para los tabs
     tab = ""
-    for i in range(tab):
+    for i in range(tabCont):
         tab +="\t"
     return tab
 
 #FUNCION: funciona como auxiliar para cantidad de tabulaciones
-def auxEnter(enter = 0):
+def auxEnter(enterCont = 0):
     enter = ""
-    for i in range(enter):
+    for i in range(enterCont):
         enter += "\n"
     
     return enter
