@@ -13,9 +13,10 @@ class Menu(Mesa):
         #limpio la pantalla
         cls()
         banner()
-
+        #recibo el nombre del jugador
         hmName = input(f"{enter}{tab[0:-1]}Nombre del jugador (Default = 'Guess'): ")
 
+        #si existe el nombre del jugador lo incluyo en la lista de jugadores, de lo contrario coloco Guess en su lugar
         if hmName:
             players = [[hmName,"HM"],["Pedro", "CPU"],["Jose", "CPU"],["Mario", "CPU"]]
         else:

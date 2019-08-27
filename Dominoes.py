@@ -187,9 +187,10 @@ class Mesa(Ficha, Jugador):
         mesa += " <::|||"
         return mesa
 
-    #METODO: ingresa los puntos ganados por los jugadores en cada jugadas y retorna resultados
+    #METODO: determina la forma en la que gana un jugador, ingresa los puntos ganados por los jugadores en cada jugadas y retorna resultados
     def __modosDeGanarPartida(self, jugadorActual, ganoPor):
 
+        #se ejecuta este script si el jugador se le acaban las fichas
         if ganoPor == "DOMINACION" or ganoPor == "CAPICUA":
             totalpuntos = 0
             
@@ -203,6 +204,7 @@ class Mesa(Ficha, Jugador):
             jugadorActual._setPuntosGanados(totalpuntos)
             return jugadorActual, "\n  {}, Gana por: {}! la partida.. Gana: {} puntos".format(jugadorActual._getNombreJugador, ganoPor, totalpuntos)
 
+        #se ejecuta este script si se tranco el juego
         elif ganoPor == "TRANQUE":
             jugadorGanador = jugadorActual
             tablaJugadorPuntos, totalpuntos = "\n", 0
@@ -216,9 +218,10 @@ class Mesa(Ficha, Jugador):
             
             jugadorGanador._setPuntosGanados(totalpuntos)
             tablaJugadorPuntos += "\n  {} Tranca el juego; {} Gana la partida por menos puntos; Gana: {} puntos".format(jugadorActual._getNombreJugador,jugadorGanador._getNombreJugador, totalpuntos)
+
             return jugadorGanador, tablaJugadorPuntos
     
-    #METODO: establece el tipo de resultado que puede el fina de una partida, agrega el tipo de fin de jugada al registro y devuelve el registro
+    #METODO: agrega el tipo de fin de jugada al registro y devuelve el registro
     def __finDePartida(self, Ganador, fichaGanadora, terminalIzq, terminalDer, passCont, registroPartidas):
 
         if Ganador._getTotalFichasJugador == 0:

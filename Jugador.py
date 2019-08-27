@@ -151,22 +151,27 @@ class Jugador:
                 #si los terminales de la mesa no son iguales y cada lado de la ficha a jugar es igual a ambos terminales, el usuario decide en que lado quiere jugar
                 if (terminalIzq != terminalDer) and ((fichaActual._getLadoA == terminalIzq and fichaActual._getLadoB == terminalDer) or (fichaActual._getLadoA == terminalDer and fichaActual._getLadoB == terminalIzq)): 
 
+                    #llamo el metodo que me permite jugar una ficha a ambos lados
                     return self.__jugadaAmbosTerminalesHM(terminalIzq, terminalDer, fichaActual)   
                 
                 #si el jugador decide jugar una ficha que se jugara por el terminal derecho, ejecuta este script        
                 elif terminalDer == fichaActual._getLadoA or terminalDer == fichaActual._getLadoB:
 
+                    #esta condicion permite voltear la ficha de ser necesario
                     if terminalDer == fichaActual._getLadoB:
                         fichaActual._girarFicha()    
 
+                    #retorno el terminal en el que se jugara la ficha y la ficha a jugar
                     return "terminalDerecho", fichaActual
 
                 #si el jugador decide jugar una ficha que se jugara por el terminal izquierdo, ejecuta este script        
                 elif terminalIzq == fichaActual._getLadoA or terminalIzq == fichaActual._getLadoB:       
-
+                    
+                    #esta condicion permite voltear la ficha de ser necesario
                     if terminalIzq == fichaActual._getLadoA:
                         fichaActual._girarFicha()                         
 
+                    #retorno el terminal en el que se jugara la ficha y la ficha a jugar
                     return "terminalIzquierdo", fichaActual
 
                 #si el jugador elige una ficha que no se puede jugar, ejecuta este comentario
@@ -184,19 +189,22 @@ class Jugador:
         #verifico si es una jugada inicial/retorno
         if jugadaInicial:
 
+            #como es una jugada inicial retorno la posicion y la ficha a jugar
             posJugada, fichaActual = self.__jugadaInicialHM
             self._fichaJugada(fichaActual)
             return posJugada, fichaActual
 
         #verifico si el jugador posee fichas que pueda jugar        
         for ficha in self._getFichasJugador:
-
+            #si el jugador posee fichas que pueda jugar se validad la condicion de lo contrario el jugador pasara
             if terminalDer == ficha._getLadoA or terminalDer == ficha._getLadoB or terminalIzq == ficha._getLadoA or terminalIzq == ficha._getLadoB:
-
+                #recibo la ficha seleccionada por el jugador
                 posJugada, fichaActual = self.__modosDeJugadaHM(terminalIzq, terminalDer)
+                #elimino la ficha jugada de la posecion de fichas del jugador
                 self._fichaJugada(fichaActual)
+                #retorno la ficha jugada
                 return posJugada, fichaActual 
-
+        #si el jugador no posee fichas que se puedan jugar el jugador retorna pase
         input("\n  ATENCION|No posees fichas que puedas jugar, presiona cualquier tecla para continuar...")
         return None, "PASS"
 
